@@ -1,0 +1,105 @@
+﻿@page "/"
+@using Car_Rental.Business;
+@using Car_Rental.Common.Enums;
+
+@inject BookingProcessor Processor;
+
+<h1>Car Rental</h1>
+<div style="padding-top: 5rem; max-width: 30rem;">
+    <h2>Customers</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>SSN</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Processor._people)
+            {
+                <tr>
+                    <td>@s.Ssn</td>
+                    <td>@s.LastName</td>
+                    <td>@s.FirstName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <h2>Vehicles</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>RegNo</th>
+                <th>Make</th>
+                <th>Odometer</th>
+                <th>Vehicle type</th>
+                <th>Price per Km</th>
+                <th>Price per day</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Processor._vehicles)
+            {
+                <tr>
+                    <td>@s.RegNo</td>
+                    <td>@s.Make</td>
+                    <td>@s.Odometer</td>
+                    <td>@s.VehicleType</td>
+                    <td>@s.KmCost</td>
+                    <td>@s.Price</td>
+                    <td>@s.Status</td>
+                    <td>
+                        <button @onclick="() => Processor.RentCar(s)">Rent</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h2>Bookings</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>RegNo</th>
+                <th>Customer</th>
+                <th>Km rented</th>
+                <th>Km returned</th>
+                <th>Date rented</th>
+                <th>Date returned</th>
+                <th>Total cost</th>
+                <th>Status</th>
+                <th>Enter Km</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Processor._bookings)
+            {
+                <tr>
+                    <td>@s.RegNo</td>
+                    <td>@s.Customer</td>
+                    <td>@s.KmRented</td>
+                    <td>@s.KmReturned</td>
+                    <td>@s.DateRented</td>
+                    <td>@s.DateReturned</td>
+                    <td>@s.Cost</td>
+                    <td>@s.Status</td>
+                    <td>
+                        <input @bind="Processor.returnKm"/>
+                    </td>
+                    <td>
+                        @if (s.Status == BookingStatus.Open)
+                        {
+                            <button @onclick="() => Processor.ReturnCar(s)">return</button>                            
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

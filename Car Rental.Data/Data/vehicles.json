@@ -1,0 +1,82 @@
+﻿[
+    {
+        "VehicleType": 0,
+        "RegNo": "SJK049",
+        "Make": "VolksWagen",
+        "Odometer": 10500,
+        "KmCost":  10,
+        "Price": 200
+    },
+    {
+        "VehicleType": 1,
+        "RegNo": "RAN999",
+        "Make": "Volvo",
+        "Odometer": 1000,
+        "KmCost": 10,
+        "Price": 300
+    },
+    {
+        "VehicleType": 3,
+        "RegNo": "KIA399",
+        "Make": "Kia",
+        "Odometer": 35000,
+        "KmCost": 10,
+        "Price": 50
+    },
+    {
+        "VehicleType": 4,
+        "RegNo": "RIK200",
+        "Make": "Lexus",
+        "Odometer": 3000,
+        "KmCost": 10,
+        "Price": 400
+    },
+    {
+        "VehicleType": 5,
+        "RegNo": "FLY100",
+        "Make": "Mercedes",
+        "Odometer": 24500,
+        "KmCost": 10,
+        "Price": 150
+    },
+    {
+        "VehicleType": 6,
+        "RegNo": "LUC666",
+        "Make": "Honda",
+        "Odometer": 3050,
+        "KmCost": 10,
+        "Price": 100
+    },
+    {
+        "VehicleType": 7,
+        "RegNo": "UMM444",
+        "Make": "Iveco",
+        "Odometer": 70000,
+        "KmCost": 10,
+        "Price": 200
+    },
+    {
+        "VehicleType": 0,
+        "RegNo": "JWW847",
+        "Make": "BMW",
+        "Odometer": 16500,
+        "KmCost": 10,
+        "Price": 100
+    },
+    {
+        "VehicleType": 1,
+        "RegNo": "ULF111",
+        "Make": "VolksWagen",
+        "Odometer": 800,
+        "KmCost": 10,
+        "Price": 350
+    },
+    {
+        "VehicleType": 5,
+        "RegNo": "OOO000",
+        "Make": "Daytona",
+        "Odometer": 150,
+        "KmCost": 10,
+        "Price": 300
+    }
+]

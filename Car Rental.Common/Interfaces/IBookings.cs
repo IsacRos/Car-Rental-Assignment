@@ -4,19 +4,19 @@ namespace Car_Rental.Common.Interfaces;
 
 public interface IBookings
 {
-	public int Id { get; init; }
-	public string RegNo { get; init; }
-	public string Customer { get; init; }
-	public int KmRented { get; init; }
-	public double Cost { get; }
-	public DateTime DateRented { get; init; }
-	public int KmReturned { get; }
-	public DateTime? DateReturned { get; }
+    public int Id { get; init; }
+    public IVehicle Vehicle { get; init; }
+    public IPerson Customer { get; init; }
+    public int KmRented { get; init; }
+    public double Cost { get; set; }
+    public DateTime DateRented { get; init; }
+    public int KmReturned { get; }
+    public string? DateReturned { get; }
 
-	public BookingStatus Status { get; }
+    public BookingStatus Status { get; }
 
-	public void CloseBooking(int? km);
+    public void CloseBooking(int? km);
 
-	public void CalculateCost(int dailyPrice, double kmPrice, int kmRented, int kmReturned);
+	public void CalculateCost(double dailyPrice, double kmPrice, int kmRented, int kmReturned);
 }
 

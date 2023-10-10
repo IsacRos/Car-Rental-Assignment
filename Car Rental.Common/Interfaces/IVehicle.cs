@@ -10,10 +10,10 @@ public interface IVehicle
 	public string Make { get; init; }
 	public int Odometer { get; }
 	public double KmCost { get; init; }
-	public int Price { get; init; }
+	public double Price { get; init; }
 	public VehicleStatus Status { get; }
 
-	public void IsBooked(bool status);
+    public void IsBooked(bool status);
 
 	public void UpdateOdometer(int? kM);
 

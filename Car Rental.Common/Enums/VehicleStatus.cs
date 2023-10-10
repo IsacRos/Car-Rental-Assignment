@@ -3,5 +3,5 @@
 public enum VehicleStatus 
 {
 	Available,
-	Booked
+	Booked,
 }

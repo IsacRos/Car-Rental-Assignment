@@ -1,0 +1,22 @@
+﻿.table-inputs-long {
+    display: d-flex;
+    max-width: 15rem;
+}
+
+.table-inputs-medium {
+    min-width: 5rem;
+    max-width: 6rem;
+}
+
+.table-inputs-short {
+    max-width: 4rem;
+}
+
+select {
+    max-width: 13rem;
+}
+
+.status {
+    min-width: 7rem;
+    max-width: 9rem;
+}

@@ -5,23 +5,43 @@
 @inject BookingProcessor Processor;
 
 <h1>Car Rental</h1>
-<div style="padding-top: 5rem; max-width: 30rem;">
+<div style="padding-top: 5rem; max-width: 60rem;">
     <h2>Customers</h2>
+    @if (Processor.error != string.Empty)
+    {
+        <div>@Processor.error</div>
+    }
     <table class="table">
         <thead>
             <tr>
                 <th>SSN</th>
                 <th>Last Name</th>
                 <th>First Name</th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    <input class="form-control table-inputs-medium" type="number" @bind="Processor.tempSsn" />
+                </th>
+                <th>
+                    <input class="form-control table-inputs-long" type="text" @bind="Processor.tempName[0]" />
+                </th>
+                <th>
+                    <input class="form-control table-inputs-long" type="text" @bind="Processor.tempName[1]" />
+                </th>
+                <th>
+                    <button class="btn btn-primary" @onclick="Processor.AddPerson">Add</button>
+                </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var s in Processor._people)
+            @foreach (var s in Processor.GetPeople())
             {
                 <tr>
                     <td>@s.Ssn</td>
                     <td>@s.LastName</td>
                     <td>@s.FirstName</td>
+                    <td></td>
                 </tr>
             }
         </tbody>
@@ -36,13 +56,45 @@
                 <th>Make</th>
                 <th>Odometer</th>
                 <th>Vehicle type</th>
-                <th>Price per Km</th>
-                <th>Price per day</th>
-                <th>Status</th>
+                <th>€/Km</th>
+                <th>€/Day</th>
+                <th>Action</th>
+                <th class="status">Status</th>
+            </tr>
+            <tr>
+                <th>
+                    <input class="form-control table-inputs-medium" @bind="Processor.tempVehicle[0]" />
+                </th>
+                <th>
+                    <input class="form-control table-inputs-medium" type="text" @bind="Processor.tempVehicle[1]" />
+                </th>
+                <th>
+                    <input class="form-control table-inputs-medium" type="number" @bind="Processor.tempOdometer" />
+                </th>
+                <th>
+                    <select class="form-select" @bind="Processor.chooseVehicle">
+                        @foreach (var i in Enum.GetValues(typeof(VehicleTypes)))
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </th>
+                <th>
+                    <input class="form-control table-inputs-short" type="number" @bind="Processor.tempCost" />
+                </th>
+                <th>
+                    <input class="form-control table-inputs-short" type="number" @bind="Processor.tempPrice" />
+                </th>
+                <th class="d-flex justify-content-between">
+                    <button class="btn btn-primary" @onclick="Processor.AddVehicle">Add</button>
+                </th>
+                <th class="status">
+                    <span class="badge text-bg-warning">@Processor.processing</span>
+                </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var s in Processor._vehicles)
+            @foreach (var s in Processor.GetVehicles())
             {
                 <tr>
                     <td>@s.RegNo</td>
@@ -51,9 +103,34 @@
                     <td>@s.VehicleType</td>
                     <td>@s.KmCost</td>
                     <td>@s.Price</td>
-                    <td>@s.Status</td>
-                    <td>
-                        <button @onclick="() => Processor.RentCar(s)">Rent</button>
+                    @if (s.Status == VehicleStatus.Available)
+                    {
+                        <td>
+                            <div class="d-flex">
+                                <select class="form-select me-2" @bind="Processor.selectedPerson" disabled="@Processor.processBool">
+                                    <option value="-1"></option>
+                                    @foreach (var i in Processor.GetPeople())
+                                    {
+                                        <option value="@i.Id">@i.FirstName @i.LastName</option>
+                                    }
+                                </select>
+                                <button class="btn btn-info" @onclick="() => Processor.RentCar(s)" disabled="@Processor.processBool">Rent</button>
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                    <td class="status">
+                        @if (s.Status == VehicleStatus.Available)
+                        {
+                            <span class="badge text-bg-success">@s.Status</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-danger">@s.Status</span>
+                        }
                     </td>
                 </tr>
             }
@@ -75,29 +152,40 @@
                 <th>Total cost</th>
                 <th>Status</th>
                 <th>Enter Km</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var s in Processor._bookings)
+            @foreach (var s in Processor.GetBookings())
             {
                 <tr>
-                    <td>@s.RegNo</td>
-                    <td>@s.Customer</td>
+                    <td>@s.Vehicle.RegNo</td>
+                    <td>@s.Customer.FirstName @s.Customer.LastName</td>
                     <td>@s.KmRented</td>
                     <td>@s.KmReturned</td>
-                    <td>@s.DateRented</td>
+                    <td>@s.DateRented.ToShortDateString()</td>
                     <td>@s.DateReturned</td>
                     <td>@s.Cost</td>
-                    <td>@s.Status</td>
-                    <td>
-                        <input @bind="Processor.returnKm"/>
-                    </td>
-                    <td>
-                        @if (s.Status == BookingStatus.Open)
-                        {
-                            <button @onclick="() => Processor.ReturnCar(s)">return</button>                            
-                        }
-                    </td>
+                    @if (s.Status == BookingStatus.Open)
+                    {                    
+                        <td>
+                            <span class="badge text-bg-danger">@s.Status</span>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control table-inputs-medium" @bind="Processor.returnKm"/>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary" @onclick="() => Processor.ReturnCar(s)">return</button>                            
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                             <span class="badge text-bg-success">@s.Status</span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    }
                 </tr>
             }
         </tbody>

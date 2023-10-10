@@ -3,5 +3,5 @@
 public enum BookingStatus
 {
     Open,
-    Closed
+    Closed 
 }

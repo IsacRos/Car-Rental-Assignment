@@ -9,9 +9,9 @@
     <h2>Customers</h2>
     @if (Processor.error != string.Empty)
     {
-        <div>@Processor.error</div>
+        <div class="alert alert-danger" role="alert">@Processor.error</div>
     }
-    <table class="table">
+    <table class="table table-dark table-striped">
         <thead>
             <tr>
                 <th>SSN</th>
@@ -49,7 +49,7 @@
 </div>
 <div>
     <h2>Vehicles</h2>
-    <table class="table">
+    <table class="table table-dark">
         <thead>
             <tr>
                 <th>RegNo</th>
@@ -140,7 +140,7 @@
 
 <div>
     <h2>Bookings</h2>
-    <table class="table">
+    <table class="table table-dark">
         <thead>
             <tr>
                 <th>RegNo</th>

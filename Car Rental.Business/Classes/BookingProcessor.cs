@@ -27,17 +27,27 @@ public class BookingProcessor
 
     public async Task RentCar(IVehicle v)
     {
-        processing = "Processing";
-        processBool = true;
-        await Task.Delay(10000);
-        processBool = false;
-        processing = string.Empty;
+        try
+        {
+            error = string.Empty;
+            if (selectedPerson < 1) throw new ArgumentException("Please select customer");
+            processing = "Processing";
+            processBool = true;
+            await Task.Delay(10000);
+            processBool = false;
+            processing = string.Empty;
 
-        var customer = GetPerson(selectedPerson);
-        var booking = new Bookings(v, customer, v.Odometer, DateTime.Today);
-        _data.Add(booking);
-        _data.ChangeVehicleStatus(v.Id);
-        selectedPerson = 0;
+            var customer = GetPerson(selectedPerson);
+            var booking = new Bookings(v, customer, v.Odometer, DateTime.Today);
+            _data.Add(booking);
+            _data.ChangeVehicleStatus(v.Id);
+            selectedPerson = 0;
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
     }
 
     public void ReturnCar(IBookings b)
@@ -45,7 +55,7 @@ public class BookingProcessor
         try
         {
             var v = _data.Get<IVehicle>(v => v.Id == b.Vehicle.Id).FirstOrDefault() ??
-                throw new ArgumentNullException("Return went wrong");
+                throw new ArgumentNullException("Couldn't find vehicle");
             b.CloseBooking(returnKm);
             v.UpdateOdometer(returnKm);
             b.CalculateCost(v.Price, v.KmCost, b.KmRented, b.KmReturned);

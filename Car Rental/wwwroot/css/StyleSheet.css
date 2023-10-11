@@ -1,22 +1,44 @@
-﻿.table-inputs-long {
+﻿body {
+    background-color: #909090;
+}
+input.form-control {
+    border: 1px solid #303030;
+    background-color: blanchedalmond;
+}
+.table-inputs-long {
     display: d-flex;
-    max-width: 15rem;
+    max-width: 13rem;
 }
 
 .table-inputs-medium {
-    min-width: 5rem;
-    max-width: 6rem;
+    min-width: 6rem;
+    max-width: 7rem;
 }
 
 .table-inputs-short {
-    max-width: 4rem;
+    min-width: 5rem;
+    max-width: 5rem;
 }
 
-select {
+select.form-select {
+    min-width: 10rem;
     max-width: 13rem;
+    border: 1px solid #808080;
+    background-color: blanchedalmond;
 }
 
 .status {
     min-width: 7rem;
     max-width: 9rem;
 }
+
+.table {
+    border-collapse: collapse;
+    border-radius: 10px;
+    border-top: 4px solid #303030;
+    border-right: 4px solid #303030;
+    border-left: 4px solid #303030;
+    border-bottom: 4px solid #303030;
+}
+
+

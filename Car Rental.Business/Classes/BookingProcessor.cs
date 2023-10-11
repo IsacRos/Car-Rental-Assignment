@@ -7,7 +7,8 @@ namespace Car_Rental.Business;
 
 public class BookingProcessor
 {
-	CollectionData _data = new();
+    #region Variables
+    CollectionData _data = new();
 
     public int? tempSsn = null;
     public string[] tempName = Enumerable.Repeat(string.Empty, 2).ToArray();
@@ -24,6 +25,7 @@ public class BookingProcessor
     public bool processBool = false;
 
     public VehicleTypes chooseVehicle = new();
+    #endregion
 
     public async Task RentCar(IVehicle v)
     {
@@ -49,7 +51,6 @@ public class BookingProcessor
             error = ex.Message;
         }
     }
-
     public void ReturnCar(IBookings b)
     {
         try

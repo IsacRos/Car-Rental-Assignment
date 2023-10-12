@@ -1,21 +1,23 @@
 ﻿using Car_Rental.Common.Classes;
 using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
-using Car_Rental.Data;
+using Car_Rental.Data.Interfaces;
 
 namespace Car_Rental.Business;
 
 public class BookingProcessor
 {
+    IData _data;
+
     #region Variables
-    CollectionData _data = new();
+    
+    public string error = string.Empty;
 
     public int? tempSsn = null;
     public string[] tempName = Enumerable.Repeat(string.Empty, 2).ToArray();
-    public int? returnKm;
-    public string error = string.Empty;
 
     public string[] tempVehicle = Enumerable.Repeat(string.Empty, 2).ToArray();
+    public int? returnKm;
     public int? tempOdometer;
     public double? tempCost;
     public double? tempPrice;
@@ -27,6 +29,7 @@ public class BookingProcessor
     public VehicleTypes chooseVehicle = new();
     #endregion
 
+    public BookingProcessor(IData data) => _data = data;
     public async Task RentCar(IVehicle v)
     {
         try
@@ -42,7 +45,7 @@ public class BookingProcessor
             var customer = GetPerson(selectedPerson);
             var booking = new Bookings(v, customer, v.Odometer, DateTime.Today);
             _data.Add(booking);
-            _data.ChangeVehicleStatus(v.Id);
+            v.IsBooked(true);
             selectedPerson = 0;
 
         }
@@ -55,6 +58,9 @@ public class BookingProcessor
     {
         try
         {
+            error = string.Empty;
+            if (returnKm < 0)
+                throw new ArgumentException("Can't return with negative Km");
             var v = _data.Get<IVehicle>(v => v.Id == b.Vehicle.Id).FirstOrDefault() ??
                 throw new ArgumentNullException("Couldn't find vehicle");
             b.CloseBooking(returnKm);
@@ -63,13 +69,9 @@ public class BookingProcessor
             v.IsBooked(false);
             returnKm = null;
         }
-        catch (ArgumentNullException ex)
+        catch (Exception ex)
         {
             error = ex.Message;
-        }
-        catch
-        {
-            error = "Something went wrong";
         }
     }
 
@@ -91,7 +93,6 @@ public class BookingProcessor
         }
         catch (Exception ex) { error = ex.Message; }
     }
-
     public void AddVehicle()
     {
         try
@@ -125,8 +126,7 @@ public class BookingProcessor
         {
             error = ex.Message;
         }
-    }
-
+    }    
     public IEnumerable<IPerson> GetPeople() =>_data.Get<IPerson>();
     public IEnumerable<IVehicle> GetVehicles() => _data.Get<IVehicle>();
     public IEnumerable<IBookings> GetBookings() => _data.Get<IBookings>();
@@ -143,4 +143,5 @@ public class BookingProcessor
             throw;
         }
     }
+
 }

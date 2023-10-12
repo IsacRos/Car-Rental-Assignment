@@ -2,17 +2,17 @@
 using Car_Rental.Common.Enums;
 using Car_Rental.Common.Interfaces;
 using Car_Rental.Data.Interfaces;
-using System.Linq;
+using System.Reflection;
 
 namespace Car_Rental.Data;
 
-public class CollectionData
+public class CollectionData : IData
 {
-    List<IPerson> _people = new();
+	List<IPerson> _people = new();
 	List<IVehicle> _vehicles = new();
 	List<IBookings> _bookings = new();
 
-    public int NextPersonId => _people.Count.Equals(0) ? 1 : _people.Max(b => b.Id) + 1;
+	public int NextPersonId => _people.Count.Equals(0) ? 1 : _people.Max(b => b.Id) + 1;
 	public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
 
@@ -43,11 +43,23 @@ public class CollectionData
 	}
 	public IEnumerable<T> Get<T>(Func<T, bool>? predicate = null)
 	{
-		if (typeof(T) == typeof(IPerson)) return predicate is null ? _people.Cast<T>() : _people.Cast<T>().Where(predicate);
-		else if (typeof(T) == typeof(IVehicle)) return predicate is null ? _vehicles.Cast<T>() : _vehicles.Cast<T>().Where(predicate);
-		else if (typeof(T) == typeof(IBookings)) return predicate is null ? _bookings.Cast<T>() : _bookings.Cast<T>().Where(predicate);
-		else throw new Exception();
+		FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+		try
+		{
+			foreach (var f in fields)
+			{
+				if (typeof(List<T>) == f.FieldType)
+				{
+					var list = f.GetValue(this) as List<T> ?? throw new ArgumentNullException("Can't find list");
+					return predicate is null ? list : list.Where(predicate);
+				}
+			}
+		}
+		catch
+		{
+			throw;
+		}
+		return new List<T>();
     }
 
-	public void ChangeVehicleStatus(int id) => _vehicles.Single(v => v.Id == id).IsBooked(true);
 }

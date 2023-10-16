@@ -44,10 +44,9 @@ public class BookingProcessor
 
             var customer = GetPerson(selectedPerson);
             var booking = new Bookings(v, customer, v.Odometer, DateTime.Today);
-            _data.Add(booking);
+            _data.Add<IBookings>(booking);
             v.IsBooked(true);
             selectedPerson = 0;
-
         }
         catch (Exception ex)
         {
@@ -87,7 +86,7 @@ public class BookingProcessor
                 throw new ArgumentException("Names can't be empty");
 
             Person person = new(_data.NextPersonId, (int)tempSsn, tempName[1], tempName[0]);
-            _data.Add(person);
+            _data.Add<IPerson>(person);
             (tempName[0], tempName[1]) = (string.Empty, string.Empty);
             tempSsn = null;
         }
@@ -116,7 +115,7 @@ public class BookingProcessor
                 vehicle = new Car(_data.NextVehicleId, tempVehicle[0], tempVehicle[1], 
                     (int)tempOdometer, chooseVehicle, (double)tempCost, (double)tempPrice);
 
-            _data.Add(vehicle);
+            _data.Add<IVehicle>(vehicle);
             (tempVehicle[0], tempVehicle[1]) = (string.Empty, string.Empty);
             tempOdometer = null;
             tempCost = null;

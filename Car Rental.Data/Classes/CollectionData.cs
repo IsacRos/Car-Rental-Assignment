@@ -16,10 +16,7 @@ public class CollectionData : IData
 	public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
 
-    public CollectionData()
-	{
-		SeedData();
-	}
+    public CollectionData() => SeedData();
 	void SeedData()
 	{
 		_vehicles.Add(new Car(NextVehicleId, "LIT400", "VolksWagen", 9000, VehicleTypes.Hatchback, 1, 200));
@@ -37,29 +34,29 @@ public class CollectionData : IData
 	
 	public void Add<T>(T x)
 	{
-		if (x is Person) _people.Add((IPerson)x);
-		else if (x is Car || x is Motorcycle) _vehicles.Add((IVehicle)x);
-		else if (x is Bookings) _bookings.Add((IBookings)x);
-	}
-	public IEnumerable<T> Get<T>(Func<T, bool>? predicate = null)
-	{
-		FieldInfo[] fields = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
 		try
 		{
-			foreach (var f in fields)
-			{
-				if (typeof(List<T>) == f.FieldType)
-				{
-					var list = f.GetValue(this) as List<T> ?? throw new ArgumentNullException("Can't find list");
-					return predicate is null ? list : list.Where(predicate);
-				}
-			}
+			(GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+					.FirstOrDefault(x => x.FieldType == typeof(List<T>))?
+					.GetValue(this) as List<T>)?.Add(x);		
 		}
 		catch
 		{
-			throw;
+			throw new ArgumentException("Couldn't add item");
 		}
-		return new List<T>();
     }
-
+	public IEnumerable<T> Get<T>(Func<T, bool>? predicate = null)
+	{
+        try
+		{
+			var list = this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+				.SingleOrDefault(x => x.FieldType == typeof(List<T>))?
+				.GetValue(this) as List<T>;
+			return list is not null ? predicate is null ? list : list.Where(predicate) : new List<T>();
+		}
+		catch
+		{
+			throw new ArgumentException("Couldn't find list");
+		}
+    }
 }
